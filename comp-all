@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+# One composer to rule them all
+
+COMPOSER="php -dallow_url_fopen=1 `which composer`"
+
+for folder in `find . -maxdepth 2 -type d`; do
+        if [[ -f "${folder}/composer.json" ]]; then
+                echo -n "### $folder ###-> "
+                (cd ${folder} && ${COMPOSER} $@)
+        fi
+done
