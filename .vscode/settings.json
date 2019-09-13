@@ -1,0 +1,23 @@
+{
+    "php.suggest.basic": false,
+    "gitlens.advanced.repositorySearchDepth": 2,
+    "scm.alwaysShowProviders": true,
+    "scm.providers.visible": 30,
+    "git.autofetch": true,
+    "git.confirmSync": false,
+    "git.detectSubmodulesLimit": 30,
+    "git.inputValidationLength": 150,
+    "git.scanRepositories": [
+        "/home/breier/Apps/dev"
+    ],
+    "debug.toolBarLocation": "docked",
+    "spellright.language": [
+        "English (British)"
+    ],
+    "spellright.documentTypes": [
+        "markdown",
+        "latex",
+        "plaintext",
+        "php"
+    ],
+}
