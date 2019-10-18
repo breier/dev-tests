@@ -2,165 +2,412 @@
 /**
  * PHP Version 7
  *
- * Script to test Arrays against ArrayObjects
+ * Extended Array Class to improve array handling
  *
- * @category CLI_Script
- * @package  BREIER\Tools
+ * @category Standard_Class
+ * @package  Breier\Extensions
  * @author   Andre Breier <breier.de@gmail.com>
  * @license  GPLv3 ./LICENSE
  * @link     none.io
  */
 
+/**
+ * ArrayIterator Class Entities
+ *
+ * @property int STD_PROP_LIST  = 1; Properties of the object have their normal functionality when accessed as list
+ * @property int ARRAY_AS_PROPS = 2; Entries can be accessed as properties (read and write)
+ *
+ * @method null   append(mixed $value) ................. Append an element to the object
+ * @method null   asort() .............................. Sort ascending by elements
+ * @method int    count() .............................. The amount of elements
+ * @method array  getArrayCopy() ....................... Back to good and old array
+ * @method int    getFlags() ........................... Get behaviour flags of the ArrayIterator
+ * @method mixed  key() ................................ Current position element index
+ * @method null   ksort() .............................. Sort ascending by element indexes
+ * @method null   natcasesort() ........................ Sort elements using case insensitive "natural order"
+ * @method null   natsort() ............................ Sort elements using "natural order"
+ * @method bool   offsetExists(mixed $index) ........... Validate element index
+ * @method null   offsetSet(mixed $index, mixed $newval) Append an element with index name
+ * @method null   offsetUnset(mixed $index) ............ Remove an element
+ * @method null   rewind() ............................. Move the cursor to initial position
+ * @method string serialize() .......................... Applies PHP serialization to the object
+ * @method null   setFlags(string $flags) .............. Set behaviour flags of the ArrayIterator
+ * @method null   uasort(callable $cmp_function) ....... Sort by elements using given function
+ * @method null   uksort(callable $cmp_function) ....... Sort by indexes using given function
+ * @method null   unserialize(string $serialized) ...... Populates the object with using PHP unserialization
+ * @method bool   valid() .............................. Validate element in the current position
+ *
+ * Extended Array Class
+ *
+ * @category Standard_Class
+ * @package  Breier\Extensions
+ * @author   Andre Breier <breier.de@gmail.com>
+ * @license  GPLv3 ./LICENSE
+ * @link     none.io
+ */
 class ExtendedArray extends ArrayIterator
 {
-    public function __construct(array $array = null)
+    private $_lastCursorKey = null;
+
+    /**
+     * Instantiate an Extended Array
+     *
+     * @param array $array To be parsed as object
+     * @param int   $flags (STD_PROP_LIST | ARRAY_AS_PROPS)
+     */
+    public function __construct(array $array = null, int $flags = 2)
     {
         if (empty($array)) {
             $array = [];
         }
 
-        parent::__construct($array);
+        parent::__construct($array, $flags);
     }
 
+    /**
+     * Reverse Sort by element, polyfill for `arsort`
+     *
+     * @return void
+     */
+    public function arsort(): void
+    {
+        $this->uasort(
+            function ($a, $b) {
+                return $b <=> $a;
+            }
+        );
+    }
+
+    /**
+     * Extending Current Method to return ExtendedArray instead of array
+     *
+     * @return mixed
+     */
+    public function current()
+    {
+        $item = parent::current();
+
+        return is_array($item)
+            ? new static($item)
+            : $item;
+    }
+
+    /**
+     * Element is an alias for Current
+     *
+     * @return mixed
+     */
+    public function element()
+    {
+        return $this->current();
+    }
+
+    /**
+     * Move the Cursor to the End, polyfill for `end`
+     *
+     * @return ExtendedArray
+     */
+    public function end(): ExtendedArray
+    {
+        if ($this->count()) {
+            $this->seek($this->count() -1);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Filter polyfill for `array_filter`
+     *
+     * @param callable $callback Function to use
+     *
+     * @return ExtendedArray
+     */
+    public function filter(callable $callback = null): ExtendedArray
+    {
+        if (is_null($callback)) {
+            $callback = function ($item) {
+                return !empty($item);
+            };
+        }
+
+        $this->_saveCursor();
+
+        $filteredArray = new static();
+
+        foreach ($this as $key => $value) {
+            if ($callback($value)) {
+                $filteredArray->offsetSet($key, $value);
+            }
+        }
+
+        $this->_restoreCursor();
+
+        return $filteredArray;
+    }
+
+    /**
+     * First is an alias for Rewind returning $this
+     *
+     * @return ExtendedArray
+     */
+    public function first(): ExtendedArray
+    {
+        $this->rewind();
+
+        return $this;
+    }
+
+    /**
+     * ExtendedArray from JSON
+     *
+     * @param string $json    To parse
+     * @param int    $depth   Recursion level
+     * @param int    $options (JSON_THROW_ON_ERROR | JSON_BIGINT_AS_STRING | ...)
+     *
+     * @return ExtendedArray
+     */
+    public static function fromJSON(string $json, int $depth = 512, int $options = 0): ExtendedArray
+    {
+        return new static(
+            json_decode($json, true, $depth, $options)
+        );
+    }
+
+    /**
+     * JSON Serialize
+     *
+     * @param int $options (JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | ...)
+     * @param int $depth   Recursion level
+     *
+     * @return string
+     */
+    public function JsonSerialize(int $options = 0, $depth = 512): string
+    {
+        return json_encode($this, $options, $depth);
+    }
+
+    /**
+     * Reverse Sort by index, polyfill for `krsort`
+     *
+     * @return void
+     */
+    public function krsort(): void
+    {
+        $this->uksort(
+            function ($a, $b) {
+                if (is_numeric($b) ^ is_numeric($a)) {
+                    return is_numeric($b) <=> is_numeric($a);
+                }
+
+                return $b <=> $a;
+            }
+        );
+    }
+
+    /**
+     * Map polyfill for `array_map`
+     *
+     * @param callable $callback Function to use
+     *
+     * @return ExtendedArray
+     */
+    public function map(callable $callback): ExtendedArray
+    {
+        $this->_saveCursor();
+
+        $mappedArray = new static();
+
+        foreach ($this as $value) {
+            $mappedArray->append($callback($value));
+        }
+
+        $this->_restoreCursor();
+
+        return $mappedArray;
+    }
+
+    /**
+     * Extending next Method to Return ExtendedArray instead of void
+     *
+     * @return ExtendedArray
+     */
+    public function next(): ExtendedArray
+    {
+        parent::next();
+
+        return $this;
+    }
+
+    /**
+     * Extending OffsetGet Method to Return ExtendedArray instead of array
+     *
+     * @param int|string $key Property to Get
+     *
+     * @return mixed
+     */
+    public function offsetGet($key)
+    {
+        $item = parent::offsetGet($key);
+
+        return is_array($item)
+            ? new static($item)
+            : $item;
+    }
+
+    /**
+     * Offset Get First
+     *
+     * @return mixed
+     */
     public function offsetGetFirst()
     {
-        foreach($this as $item) {
-            return $item;
+        $this->_saveCursor();
+
+        $firstItem = null;
+
+        foreach ($this as $item) {
+            $firstItem = $item;
+            break;
         }
 
-        return null;
+        $this->_restoreCursor();
+
+        return is_array($firstItem)
+            ? new static($firstItem)
+            : $firstItem;
     }
 
+    /**
+     * Offset Get Last
+     *
+     * @return mixed
+     */
     public function offsetGetLast()
     {
-        if (!$this->count()) {
-            return null;
-        }
+        $this->_saveCursor();
 
-        $initialKey = $this->key();
+        $lastItem = $this->end()->element();
 
-        $this->seek($this->count() - 1);
-        $lastItem = $this->current();
-
-        $this->seekKey($initialKey);
+        $this->_restoreCursor();
 
         return $lastItem;
     }
 
-    public function seekKey($key)
+    /**
+     * Offset Get by given Position
+     *
+     * @param int $position To seek
+     *
+     * @return mixed
+     */
+    public function offsetGetPosition(int $position)
+    {
+        $this->_saveCursor();
+
+        $item = $this->seek($position)->element();
+
+        $this->_restoreCursor();
+
+        return $item;
+    }
+
+    /**
+     * Move the Cursor to Previous element
+     *
+     * @return ExtendedArray
+     */
+    public function prev(): ExtendedArray
+    {
+        $iterationKey = null;
+        $currentKey = $this->key();
+
+        foreach ($this as $key => $value) {
+            if ($key === $currentKey) {
+                $previousKey = $iterationKey;
+                break;
+            }
+
+            $iterationKey = $key;
+        }
+
+        if (isset($previousKey)) {
+            return $this->seekKey($previousKey);
+        }
+
+        return $this->end()->next();
+    }
+
+    /**
+     * Extending seek Method to Return ExtendedArray instead of void
+     *
+     * @param int $position To seek
+     *
+     * @return ExtendedArray
+     */
+    public function seek($position): ExtendedArray
+    {
+        parent::seek($position);
+
+        return $this;
+    }
+
+    /**
+     * Seek Key moves the pointer to given key
+     *
+     * @param int|string $key Property to seek
+     *
+     * @return ExtendedArray
+     * @throws Exception
+     */
+    public function seekKey($key): ExtendedArray
     {
         if (!$this->offsetExists($key)) {
             throw new Exception("Key '{$key}' doesn't exist!");
         }
 
         for ($this->rewind(); $this->valid(); $this->next()) {
-            if ($this->key() == $key) {
+            if ($this->key() === $key) {
                 break;
             }
         }
+
+        return $this;
     }
 
-    public function filter(callable $callback): BreierArray
+    /**
+     * Shuffle Elements Randomly, polyfill for `shuffle`
+     *
+     * @return void
+     */
+    public function shuffle(): void
     {
-        $filteredArray = new static();
-
-        foreach($this as $key => $value) {
-            if ($callback($value)) {
-                $filteredArray->offsetSet($key, $value);
+        $this->uasort(
+            function ($a, $b) {
+                return rand(-1, 1);
             }
-        }
-
-        return $filteredArray;
+        );
     }
 
-    public function map(callable $callback): BreierArray
+    /**
+     * Save Current Cursor Position so it can be restored
+     *
+     * @return void
+     */
+    private function _saveCursor(): void
     {
-        $mappedArray = new static();
+        $this->_lastCursorKey = $this->key();
+    }
 
-        foreach ($this as $key => $value) {
-            $mappedArray->offsetSet($key, $callback($value));
+    /**
+     * Restore Cursor Position
+     *
+     * @return void
+     */
+    private function _restoreCursor(): void
+    {
+        if (!is_null($this->_lastCursorKey)) {
+            $this->seekKey($this->_lastCursorKey);
         }
-
-        return $mappedArray;
     }
 }
-
-/**
- * Declaring Array
- */
-$array = new ExtendedArray(
-    [
-        'test' => 'one',
-        [
-            'two' => 1
-        ]
-    ]
-);
-
-/**
- * Small function to simplify Output
- */
-function stringify($mixed) {
-    return substr(json_encode($mixed), 0, 30) . '...';
-}
-
-/**
- * Object Oriented Version
- */
-echo 'first item => ' . stringify($array->offsetGetFirst()) . PHP_EOL;
-echo 'last item => ' . stringify($array->offsetGetLast()) . PHP_EOL;
-
-$filteredArray = $array->filter(
-    function($item) {
-        return @count($item) >= 10;
-    }
-);
-
-echo 'first item => ' . stringify($filteredArray->offsetGetFirst()) . PHP_EOL;
-echo 'last item => ' . stringify($filteredArray->offsetGetLast()) . PHP_EOL;
-
-$mappedArray = $array->map(
-    function($item) {
-        if (!is_array($item)) return false;
-        return stringify($item);
-    })->filter(
-        function($item) {
-            return $item !== false;
-        }
-    );
-
-echo 'first item => ' . stringify($mappedArray->offsetGetFirst()) . PHP_EOL;
-echo 'last item => ' . stringify($mappedArray->offsetGetLast()) . PHP_EOL;
-
-/**
- * Structured Version
- */
-
-echo 'first item => ' . stringify(reset($array)) . PHP_EOL;
-echo 'last item => ' . stringify(end($array)) . PHP_EOL;
-
-$filtered_array = array_filter(
-    $array,
-    function($item) {
-        return @count($item) >= 10;
-    }
-);
-
-echo 'first item => ' . stringify(reset($filtered_array)) . PHP_EOL;
-echo 'last item => ' . stringify(end($filtered_array)) . PHP_EOL;
-
-$mapped_array = array_filter(
-    array_map(
-        function($item) {
-            if (!is_array($item)) return false;
-            return end($item);
-        },
-        $array
-    ),
-    function($item) {
-        return $item !== false;
-    }
-);
-
-echo 'first item => ' . stringify(reset($mapped_array)) . PHP_EOL;
-echo 'last item => ' . stringify(end($mapped_array)) . PHP_EOL;
