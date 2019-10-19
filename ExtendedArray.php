@@ -79,6 +79,40 @@ class ExtendedArray extends ArrayIterator
     }
 
     /**
+     * Contains polyfill for `in_array`
+     *
+     * @param mixed $needle To search for
+     * @param bool  $strict Hard or soft comparison
+     *
+     * @return bool
+     */
+    public function contains($needle, $strict = false): bool
+    {
+        $compare = $strict
+            ? function ($a, $b) {
+                return $a === $b;
+            }
+            : function ($a, $b) {
+                return (object) $a == (object) $b;
+            };
+
+        $isContained = false;
+
+        $this->_saveCursor();
+
+        foreach ($this as $element) {
+            if ($compare($element, $needle)) {
+                $isContained = true;
+                break;
+            }
+        }
+
+        $this->_restoreCursor();
+
+        return $isContained;
+    }
+
+    /**
      * Extending Current Method to return ExtendedArray instead of array
      *
      * @return mixed
