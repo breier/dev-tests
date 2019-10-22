@@ -4,12 +4,18 @@
  *
  * Extended Array Class to improve array handling
  *
- * @category Standard_Class
- * @package  Breier\Extensions
+ * @category Extended_Class
+ * @package  Breier\Model
  * @author   Andre Breier <breier.de@gmail.com>
  * @license  GPLv3 ./LICENSE
  * @link     none.io
  */
+
+namespace Breier\Model;
+
+use \ArrayIterator;
+use \ArrayObject;
+use \Exception;
 
 /**
  * ArrayIterator Class Entities
@@ -39,8 +45,8 @@
  *
  * Extended Array Class
  *
- * @category Standard_Class
- * @package  Breier\Extensions
+ * @category Extended_Class
+ * @package  Breier\Model
  * @author   Andre Breier <breier.de@gmail.com>
  * @license  GPLv3 ./LICENSE
  * @link     none.io
@@ -52,11 +58,15 @@ class ExtendedArray extends ArrayIterator
     /**
      * Instantiate an Extended Array
      *
-     * @param array $array To be parsed as object
+     * @param array $array To be parsed into properties
      * @param int   $flags (STD_PROP_LIST | ARRAY_AS_PROPS)
      */
-    public function __construct(array $array = null, int $flags = 2)
+    public function __construct($array = null, int $flags = 2)
     {
+        if ($array instanceof ArrayIterator || $array instanceof ArrayObject) {
+            $array = $array->getArrayCopy();
+        }
+
         if (empty($array)) {
             $array = [];
         }
