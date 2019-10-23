@@ -13,6 +13,7 @@
 
 namespace Breier\Model;
 
+use \SplFixedArray;
 use \ArrayIterator;
 use \ArrayObject;
 use \Exception;
@@ -65,6 +66,10 @@ class ExtendedArray extends ArrayIterator
     {
         if ($array instanceof ArrayIterator || $array instanceof ArrayObject) {
             $array = $array->getArrayCopy();
+        }
+
+        if ($array instanceof SplFixedArray) {
+            $array = $array->toArray();
         }
 
         if (empty($array)) {
@@ -215,6 +220,23 @@ class ExtendedArray extends ArrayIterator
     {
         return new static(
             json_decode($json, true, $depth, $options)
+        );
+    }
+
+    /**
+     * Is Array static function, extends `is_array`
+     *
+     * @param array|ExtendedArray $element To be validated
+     *
+     * @return bool
+     */
+    public static function isArray($element): bool
+    {
+        return (
+            is_array($element)
+            || $element instanceof ArrayObject
+            || $element instanceof ArrayIterator
+            || $element instanceof SplFixedArray
         );
     }
 
