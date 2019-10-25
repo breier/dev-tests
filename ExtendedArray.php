@@ -36,7 +36,6 @@ use \Exception;
  * @method bool   offsetExists(mixed $index) ........... Validate element index
  * @method null   offsetSet(mixed $index, mixed $newval) Append an element with index name
  * @method null   offsetUnset(mixed $index) ............ Remove an element
- * @method null   rewind() ............................. Move the cursor to initial position
  * @method string serialize() .......................... Applies PHP serialization to the object
  * @method null   setFlags(string $flags) .............. Set behaviour flags of the ArrayIterator
  * @method null   uasort(callable $cmp_function) ....... Sort by elements using given function
@@ -54,7 +53,8 @@ use \Exception;
  */
 class ExtendedArray extends ArrayIterator
 {
-    private $_lastCursorKey = null;
+    private $_positionMap;
+    private $_lastCursorKey;
 
     /**
      * Instantiate an Extended Array
@@ -77,6 +77,8 @@ class ExtendedArray extends ArrayIterator
         }
 
         parent::__construct($array, $flags);
+
+        $this->_updatePositionMap();
     }
 
     /**
@@ -91,6 +93,8 @@ class ExtendedArray extends ArrayIterator
                 return $b <=> $a;
             }
         );
+
+        $this->_updatePositionMap();
     }
 
     /**
@@ -196,15 +200,13 @@ class ExtendedArray extends ArrayIterator
     }
 
     /**
-     * First is an alias for Rewind returning $this
+     * First is an alias for Rewind
      *
      * @return ExtendedArray
      */
     public function first(): ExtendedArray
     {
-        $this->rewind();
-
-        return $this;
+        return $this->rewind();
     }
 
     /**
@@ -254,6 +256,26 @@ class ExtendedArray extends ArrayIterator
     }
 
     /**
+     * Extended Array Keys, polyfill for `array_keys`
+     *
+     * @return ExtendedArray
+     */
+    public function keys(): ExtendedArray
+    {
+        $this->_saveCursor();
+
+        $keysArray = new static();
+
+        foreach ($this as $key => $value) {
+            $keysArray->append($key);
+        }
+
+        $this->_restoreCursor();
+
+        return $keysArray;
+    }
+
+    /**
      * Reverse Sort by index, polyfill for `krsort`
      *
      * @return void
@@ -269,6 +291,18 @@ class ExtendedArray extends ArrayIterator
                 return $b <=> $a;
             }
         );
+
+        $this->_updatePositionMap();
+    }
+
+    /**
+     * Last is an alias to End
+     *
+     * @return ExtendedArray
+     */
+    public function last(): ExtendedArray
+    {
+        return $this->end();
     }
 
     /**
@@ -284,8 +318,8 @@ class ExtendedArray extends ArrayIterator
 
         $mappedArray = new static();
 
-        foreach ($this as $value) {
-            $mappedArray->append($callback($value));
+        foreach ($this as $key => $value) {
+            $mappedArray->offsetSet($key, $callback($value));
         }
 
         $this->_restoreCursor();
@@ -330,12 +364,7 @@ class ExtendedArray extends ArrayIterator
     {
         $this->_saveCursor();
 
-        $firstItem = null;
-
-        foreach ($this as $item) {
-            $firstItem = $item;
-            break;
-        }
+        $firstItem = $this->first()->element();
 
         $this->_restoreCursor();
 
@@ -353,7 +382,7 @@ class ExtendedArray extends ArrayIterator
     {
         $this->_saveCursor();
 
-        $lastItem = $this->end()->element();
+        $lastItem = $this->last()->element();
 
         $this->_restoreCursor();
 
@@ -379,29 +408,45 @@ class ExtendedArray extends ArrayIterator
     }
 
     /**
+     * Current Position, polyfill for `pos` of SplFixedArray
+     *
+     * @return int
+     */
+    public function pos(): int
+    {
+        return array_search(
+            $this->key(),
+            $this->_positionMap,
+            true
+        );
+    }
+
+    /**
      * Move the Cursor to Previous element
      *
      * @return ExtendedArray
      */
     public function prev(): ExtendedArray
     {
-        $iterationKey = null;
-        $currentKey = $this->key();
+        $currentPosition = $this->pos();
 
-        foreach ($this as $key => $value) {
-            if ($key === $currentKey) {
-                $previousKey = $iterationKey;
-                break;
-            }
-
-            $iterationKey = $key;
+        if (!$currentPosition) {
+            return $this->end()->next();
         }
 
-        if (isset($previousKey)) {
-            return $this->seekKey($previousKey);
-        }
+        return $this->seek($currentPosition - 1);
+    }
 
-        return $this->end()->next();
+    /**
+     * Move the cursor to initial position
+     *
+     * @return ExtendedArray
+     */
+    public function rewind(): ExtendedArray
+    {
+        parent::rewind();
+
+        return $this;
     }
 
     /**
@@ -432,13 +477,13 @@ class ExtendedArray extends ArrayIterator
             throw new Exception("Key '{$key}' doesn't exist!");
         }
 
-        for ($this->rewind(); $this->valid(); $this->next()) {
-            if ($this->key() === $key) {
-                break;
-            }
-        }
+        $keyPosition = array_search(
+            $key,
+            $this->_positionMap,
+            true
+        );
 
-        return $this;
+        return $this->seek($keyPosition);
     }
 
     /**
@@ -453,6 +498,18 @@ class ExtendedArray extends ArrayIterator
                 return rand(-1, 1);
             }
         );
+
+        $this->_updatePositionMap();
+    }
+
+    /**
+     * Update Position Map
+     *
+     * @return null
+     */
+    private function _updatePositionMap()
+    {
+        $this->_positionMap = $this->keys()->getArrayCopy();
     }
 
     /**
