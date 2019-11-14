@@ -1,0 +1,34 @@
+{
+	"Dump and Exit": {
+		"prefix": "dump",
+		"body": "var_dump($1); exit();",
+		"description": "Dumps the content to console and exits"
+	},
+	"Echo Pretty JSON": {
+		"prefix": "pretty",
+		"body": [
+			"echo json_encode(",
+			"    ${1:var},",
+			"    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES",
+			") . PHP_EOL;"
+		],
+		"description": "Prints pretty unescaped JSON with a new line"
+	},
+	"New Class Method": {
+		"prefix": "method",
+		"body": [
+			"/**",
+			" * Declare ${2:methodName}",
+			" *",
+			" * @param ${3:\\$param} Comment",
+			" *",
+			" * @return ${4:void}",
+			" */",
+			"${1:public} function ${2:methodName}(${3:\\$param}): ${4:void}",
+			"{",
+			"    $0",
+			"}"
+		],
+		"description": "New Method with php-doc"
+	}
+}

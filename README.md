@@ -6,3 +6,6 @@ Home Linux Environment Configuration Files
 dconf dump /com/gexperts/Tilix/ > tilix.dconf
 dconf load /com/gexperts/Tilix/ < tilix.dconf
 ```
+
+## VS Code Snippets
+Should be placed at `~/.config/Code/User/snippets/php.json`
