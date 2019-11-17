@@ -30,5 +30,24 @@
 			"}"
 		],
 		"description": "New Method with php-doc"
+	},
+	"New File Documentation": {
+		"prefix": "docnew",
+		"body": [
+			"<?php",
+			"/**",
+			" * PHP Version 7",
+			" *",
+			" * ${1:File Name} ${2:Category}",
+			" *",
+			" * @category ${2:Category}",
+			" * @package  Breier\\\\${2:Category}",
+			" * @author   Andre Breier <breier.de@gmail.com>",
+			" * @license  GPLv3 /LICENSE",
+			" * @link     none.io",
+			" */",
+			"$0"
+		],
+		"description": "New File Documentation with php-doc"
 	}
 }
