@@ -33,5 +33,10 @@ fi
 if [ -f /usr/share/git-core/contrib/completion/git-prompt.sh ]; then
 	. /usr/share/git-core/contrib/completion/git-prompt.sh
 	export GIT_PS1_SHOWDIRTYSTATE=1
-	export PS1='[\u@\h \W]$(__git_ps1 " (%s)")\$ '
+	GIT_STATUS='\[\033[01;33m\]$(__git_ps1 " (%s)")\[\033[00m\]'
 fi
+
+USER_COLOR=$(( 31 + $(( ! 0 ^ ! ${UID} )) ))
+USER_NAME="[\\[\\033[01;${USER_COLOR}m\\]\\u\\[\\033[00m\\]"
+DIR_NAME='\[\033[01;34m\]\W\[\033[00m\]'
+export PS1="${USER_NAME}@\\h ${DIR_NAME}]${GIT_STATUS}\\$ "
