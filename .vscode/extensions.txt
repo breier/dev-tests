@@ -1,6 +1,7 @@
 ryanluker.vscode-coverage-gutters
 mrmlnc.vscode-duplicate
 eamodio.gitlens
+bmewburn.vscode-intelephense-client
 tkrkt.linenote
 ms-vsliveshare.vsliveshare
 adammaras.overtype
