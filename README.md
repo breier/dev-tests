@@ -14,5 +14,13 @@ dconf dump /com/gexperts/Tilix/ > tilix.dconf
 dconf load /com/gexperts/Tilix/ < tilix.dconf
 ```
 
-## VS Code Snippets Folder
-Should be placed at `~/.config/Code/User/snippets/php.json`
+## VS Code Settings
+To install "Fira Code" font:
+```
+sudo dnf copr enable evana/fira-code-fonts
+sudo dnf install fira-code-fonts
+```
+
+Settings file should be placed at `~/.config/Code/User/settings.json`
+
+Snippets php file should be placed at `~/.config/Code/User/snippets/php.json`

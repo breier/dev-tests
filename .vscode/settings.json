@@ -11,6 +11,7 @@
         "/home/breier/Apps/dev"
     ],
     "debug.toolBarLocation": "docked",
+    "spellright.notificationClass": "warning",
     "spellright.language": [
         "English (British)"
     ],
@@ -20,4 +21,9 @@
         "plaintext",
         "php"
     ],
+    "coverage-gutters.showLineCoverage": true,
+    "coverage-gutters.showRulerCoverage": true,
+    "window.menuBarVisibility": "toggle",
+    "editor.fontFamily": "Fira Code Retina",
+    "editor.fontLigatures": true
 }
