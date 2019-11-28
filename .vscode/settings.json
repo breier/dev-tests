@@ -1,5 +1,8 @@
 {
     "php.suggest.basic": false,
+    "php-cs-fixer.rules": "@PSR12",
+    "phpcs.standard": "PSR12",
+    "editor.rulers": [80,120],
     "gitlens.advanced.repositorySearchDepth": 2,
     "scm.alwaysShowProviders": true,
     "scm.providers.visible": 30,
@@ -25,5 +28,9 @@
     "coverage-gutters.showRulerCoverage": true,
     "window.menuBarVisibility": "toggle",
     "editor.fontFamily": "Fira Code Retina",
-    "editor.fontLigatures": true
+    "editor.fontLigatures": true,
+    "window.zoomLevel": 0,
+    "files.associations": {
+        "*.xml.dist": "xml"
+    }
 }
