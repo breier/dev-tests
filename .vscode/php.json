@@ -18,7 +18,7 @@
 		"prefix": "method",
 		"body": [
 			"/**",
-			" * Declare ${2:methodName}",
+			" * ${5:Description}",
 			" *",
 			" * @param ${3:\\$param} Comment",
 			" *",
@@ -35,6 +35,7 @@
 		"prefix": "docnew",
 		"body": [
 			"<?php",
+			"",
 			"/**",
 			" * PHP Version 7",
 			" *",
@@ -46,6 +47,7 @@
 			" * @license  GPLv3 /LICENSE",
 			" * @link     none.io",
 			" */",
+			"",
 			"$0"
 		],
 		"description": "New File Documentation with php-doc"
