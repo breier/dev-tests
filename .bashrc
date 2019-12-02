@@ -37,6 +37,7 @@ if [ -f /usr/share/git-core/contrib/completion/git-prompt.sh ]; then
 fi
 
 USER_COLOR=$(( 31 + $(( ! 0 ^ ! ${UID} )) ))
-USER_NAME="[\\[\\033[01;${USER_COLOR}m\\]\\u\\[\\033[00m\\]"
-DIR_NAME='\[\033[01;34m\]\W\[\033[00m\]'
-export PS1="${USER_NAME}@\\h ${DIR_NAME}]${GIT_STATUS}\\$ "
+USER_NAME="\\[\\033[01;${USER_COLOR}m\\]\\u\\[\\033[00m\\]"
+DIR_NAME="\\[\\033[01;34m\\]\\W\\[\\033[00m\\]"
+
+export PS1="[${USER_NAME}@\\h ${DIR_NAME}]${GIT_STATUS}\\$ "
