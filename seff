@@ -1,0 +1,28 @@
+#!/bin/bash
+#
+# SELinux Find and Fix
+
+echo "Checking audit.log"
+LINE_COUNT=$(sudo cat /var/log/audit/audit.log \
+    | audit2allow \
+    | grep -v -e 'Nothing to do\|#===\|^$' \
+    | wc -l)
+if [[ ${LINE_COUNT} -lt 1 ]]; then
+    echo Nothing to do!
+    exit 0
+fi
+
+echo "Creating SE module"
+MODULE_PATH=$(mktemp module-XXXXXX)
+sudo cat /var/log/audit/audit.log | audit2allow -M ${MODULE_PATH} > /dev/null
+if [[ -f ${MODULE_PATH}.pp ]]; then
+    echo "Applying SE module"
+    sudo semodule -i ${MODULE_PATH}.pp
+else
+    echo Problem when creating module!
+    exit 2
+fi
+
+echo "Cleaning up"
+sudo rm ${MODULE_PATH}*
+sudo truncate -s 0 /var/log/audit/audit.log
