@@ -11,3 +11,4 @@ felixfbecker.php-intellisense
 ikappas.phpcs
 ban.spellright
 britesnow.vscode-toggle-quotes
+gruntfuggly.todo-tree
