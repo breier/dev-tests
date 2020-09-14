@@ -1,3 +1,17 @@
 [user]
-	name = Andre Breier
-	email = breier.de@gmail.com
+    name = Andre Breier
+    email = breier.de@gmail.com
+
+[alias]
+    st = status
+    co = checkout
+    pull = pull --force --tags
+    br = rev-parse --abbrev-ref HEAD
+    graph = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+
+[merge]
+    tool = vimdiff
+#    conflictstyle = diff3
+
+[mergetool]
+    prompt = false
