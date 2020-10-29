@@ -1,6 +1,6 @@
 set autoindent
 set smooth
-set undo
+#set undo
 
 include /usr/share/nano/asm.nanorc
 include /usr/share/nano/autoconf.nanorc

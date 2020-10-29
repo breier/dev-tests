@@ -10,8 +10,8 @@
     graph = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
 
 [merge]
-    tool = vimdiff
+#    tool = vmdiff
 #    conflictstyle = diff3
 
 [mergetool]
-    prompt = false
+#    prompt = false
