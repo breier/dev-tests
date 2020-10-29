@@ -35,12 +35,19 @@ cp -rvf ${TMP_BASE_DIR}/confs/.bashrc ~/
 sed -i "s:\$HOME/Apps/bin:${BIN_PATH}:" ~/.bashrc
 sudo cp -rvf ~/.bashrc /root/
 
+# Installing custom scripts to local bin
+install -v -T -D -m 755 "${SCRIPT_PATH}/git-all" "${BIN_PATH}/git-all"
+install -v -T -D -m 755 "${SCRIPT_PATH}/comp-all" "${BIN_PATH}/comp-all"
+
+# Installing git config
+cp -rvf ${TMP_BASE_DIR}/confs/.gitconfig ~/
+
 # Installing nano profile
 if [[ ! -x "$(which nano)" ]]; then
     echo "installing nano (you like it)..."
     sudo yum -q -y install nano
 fi
-echo -e "set autoindent\nset smooth\nset undo\n" > ~/.nanorc
+echo -e "set autoindent\nset smooth\n#set undo\n" > ~/.nanorc
 ls -1 /usr/share/nano/*.nanorc >> ~/.nanorc
 sed -i 's:/usr/:include /usr/:' ~/.nanorc
 sudo cp -rvf ~/.nanorc /root/
