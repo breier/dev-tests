@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# One git to rule them all
+
+for folder in `find . -maxdepth 2 -type d`; do
+	if [[ -d $folder/.git ]]; then
+		echo -n "### $folder ###-> "
+		(cd $folder && git $@)
+	fi
+done

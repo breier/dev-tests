@@ -1,0 +1,13 @@
+{
+    "name": "berier/tools",
+    "description": "Breier Tools Project",
+    "require": {
+        "symfony/console": "5.2.*",
+        "symfony/http-foundation": "5.2.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Breier\\Tools\\": "src"
+        }
+    }
+}

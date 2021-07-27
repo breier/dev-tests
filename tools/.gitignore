@@ -1,0 +1,9 @@
+vendor
+
+#PHP-CS-FIXER
+.php_cs.cache
+
+#TESTS
+/tests/_output/*
+
+.phpunit.result.cache

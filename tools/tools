@@ -1,0 +1,28 @@
+#!/usr/bin/php -q
+<?php
+
+/**
+ * PHP Version 7.3
+ *
+ * Breier Tools File
+ *
+ * @category Tools
+ * @package  Breier
+ * @author   Andre Breier <breier.de@gmail.com>
+ * @license  GPLv3
+ */
+
+declare(strict_types=1);
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Symfony\Component\Console\Application;
+
+$application = new Application('Tools', 'v1');
+
+foreach (glob(__DIR__ . '/src/Command/*.php') as $commandFile) {
+    $className = 'Breier\Tools\Command\\' . basename($commandFile, '.php');
+    $application->add(new $className());
+}
+
+$application->run();

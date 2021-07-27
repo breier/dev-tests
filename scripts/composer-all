@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# One composer to rule them all
+
+COMPOSER="php -dallow_url_fopen=1 `which composer`"
+
+for folder in `find . -maxdepth 2 -type d`; do
+        if [[ -f "${folder}/composer.json" ]]; then
+                echo -n "### $folder ###-> "
+                if [[ "${1}x" == "updatex" ]]; then
+                        echo "Removing vendor folder...";
+                        rm -rf ${folder}/composer.lock ${folder}/vendor
+                fi
+                (cd ${folder} && ${COMPOSER} $@)
+        fi
+done

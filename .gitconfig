@@ -1,11 +1,12 @@
 [user]
-    name = Andre Breier
-    email = breier.de@gmail.com
+    name = GIT_NAME
+    email = GIT_MAIL
 
 [alias]
-    st = status
     co = checkout
     pull = pull --force --tags
+    st = status -s --show-stash
+    di = diff --compact-summary
     br = rev-parse --abbrev-ref HEAD
     graph = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
 

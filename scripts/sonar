@@ -1,0 +1,5 @@
+#!/bin/bash
+#
+# Script to play a sonar gnome sound alert
+
+/user/bin/ogg123 /usr/share/sounds/gnome/default/alerts/sonar.ogg

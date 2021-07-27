@@ -5,6 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Program with NodeJS",
+            "program": "${file}"
+        },
+        {
             "name": "Listen for XDebug",
             "type": "php",
             "request": "launch",
@@ -12,6 +18,12 @@
             "pathMappings": {
                 "/var/www/html": "${workspaceFolder}",
             }
+        },
+        {
+            "name": "Listen for XDebug Local",
+            "type": "php",
+            "request": "launch",
+            "port": 9000
         }
     ]
 }

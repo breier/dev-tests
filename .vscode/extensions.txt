@@ -1,14 +1,11 @@
-ryanluker.vscode-coverage-gutters
-mrmlnc.vscode-duplicate
-eamodio.gitlens
-bmewburn.vscode-intelephense-client
-tkrkt.linenote
-ms-vsliveshare.vsliveshare
-adammaras.overtype
-junstyle.php-cs-fixer
-felixfbecker.php-debug
-felixfbecker.php-intellisense
-ikappas.phpcs
-ban.spellright
-britesnow.vscode-toggle-quotes
-gruntfuggly.todo-tree
+PHP Debug                  -> felixfbecker.php-debug              -> depends on php-xdebug
+php cs fixer               -> junstyle.php-cs-fixer               -> depends on php-cs-fixer (friendsofphp/php-cs-fixer)
+phpcs                      -> ikappas.phpcs                       -> depends on php-CodeSniffer
+PHP Intelephense           -> bmewburn.vscode-intelephense-client
+GitLens - Git supercharged -> eamodio.gitlens
+Todo Tree                  -> gruntfuggly.todo-tree
+Live Share                 -> ms-vsliveshare.vsliveshare
+Beautify                   -> hookyqr.beautify
+Duplicate action           -> mrmlnc.vscode-duplicate
+Toggle Quotes              -> britesnow.vscode-toggle-quotes
+Spell Right                -> ban.spellright (https://github.com/titoBouzout/Dictionaries -> ~/.config/Code/Dictionaries/)

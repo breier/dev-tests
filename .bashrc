@@ -6,10 +6,16 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # User specific environment
-if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/Apps/bin:" ]]
+if ! [[ "$PATH" =~ "$HOME/.local/bin:" ]]
 then
-    PATH="$HOME/.local/bin:$HOME/Apps/bin:$PATH"
+    PATH="$HOME/.local/bin:$PATH"
 fi
+
+if ! [[ "$PATH" =~ "$HOME/Apps/bin:" ]]
+then
+    PATH="$HOME/Apps/bin:$PATH"
+fi
+
 export PATH
 
 # Uncomment the following line if you don't like systemctl's auto-paging feature:
@@ -17,9 +23,8 @@ export PATH
 
 # User specific aliases and functions
 
-#unalias c
-unalias ll
-unalias ls
+unalias ll 2> /dev/null
+unalias ls 2> /dev/null
 
 alias c='clear'
 alias ll='ls -l --color=auto --group-directories-first'

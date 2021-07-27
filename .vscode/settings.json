@@ -2,14 +2,16 @@
     "php.suggest.basic": false,
     "php-cs-fixer.rules": "@PSR12",
     "phpcs.standard": "PSR12",
-    "editor.rulers": [80,120],
+    "editor.rulers": [80, 120],
     "gitlens.advanced.repositorySearchDepth": 2,
-    "scm.alwaysShowProviders": true,
-    "scm.providers.visible": 30,
+    "gitlens.codeLens.enabled": false,
     "git.autofetch": true,
     "git.confirmSync": false,
     "git.detectSubmodulesLimit": 30,
     "git.inputValidationLength": 150,
+    "git.allowForcePush": true,
+    "git.fetchOnPull": true,
+    "git.pullTags": false,
     "git.scanRepositories": [
         "/home/breier/Apps/dev"
     ],
@@ -24,8 +26,6 @@
         "plaintext",
         "php"
     ],
-    "coverage-gutters.showLineCoverage": true,
-    "coverage-gutters.showRulerCoverage": true,
     "window.menuBarVisibility": "toggle",
     "editor.fontFamily": "Fira Code Retina",
     "editor.fontLigatures": true,
