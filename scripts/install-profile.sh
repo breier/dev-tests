@@ -9,9 +9,9 @@ if [[ $(whoami) == "root" ]]; then
 fi
 
 # Setting package manager
-which yum > /dev/null 2>&1
+which dnf > /dev/null 2>&1
 if [[ $? == 0 ]]; then
-    PKG="yum"
+    PKG="dnf"
 else
     PKG="apt"
 fi
@@ -64,7 +64,11 @@ if [[ ${REPLY} =~ [Nn] ]]; then
     echo OK
 else
     install -v -T -D -m 755 "${SCRIPT_PATH}/vi" "${BIN_PATH}/vi"
-    sudo ${PKG} remove vi vim
+    if [[ ${PKG} == "apt" ]]; then
+        sudo apt remove vim && sudo apt autoremove
+    else
+        sudo dnf remove vi
+    fi
 fi
 
 which code > /dev/null 2>&1
@@ -76,5 +80,16 @@ if [[ $? == 0 ]]; then
         for EXT_NAME in $(cat ${SCRIPT_PATH}/../.vscode/extensions.txt | cut -f2 -d'>' | awk '{print $1}'); do
             code --install-extension ${EXT_NAME}
         done
+
+        if [[ ${PKG} == "apt" ]]; then
+            sudo apt update
+            sudo apt install php php-codesniffer php-mysql php-xdebug composer
+            composer global require friendsofphp/php-cs-fixer composer/composer
+            (cd ~/.local/bin && ln -s ~/.config/composer/vendor/bin/php-cs-fixer)
+            (cd ~/.local/bin && ln -s ~/.config/composer/vendor/bin/composer)
+            sudo apt remove composer && sudo apt autoremove
+        else
+            echo dnf install stuff
+        fi
     fi
 fi
