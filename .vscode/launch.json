@@ -11,19 +11,45 @@
             "program": "${file}"
         },
         {
-            "name": "Listen for XDebug",
+            "name": "Listen for Xdebug",
             "type": "php",
             "request": "launch",
-            "port": 9000,
+            "hostname": "0.0.0.0",
+            "port": 9003,
             "pathMappings": {
                 "/var/www/html": "${workspaceFolder}",
             }
+            // environment:
+            //   XDEBUG_MODE: 'debug'
+            //   XDEBUG_START_WITH_REQUEST: 'yes'
+            //   XDEBUG_CLIENT_HOST: 'host.docker.internal'
+            //   XDEBUG_CLIENT_PORT: '9000'
         },
         {
             "name": "Listen for XDebug Local",
             "type": "php",
             "request": "launch",
-            "port": 9000
+            "hostname": "0.0.0.0",
+            "port": 9003
+        },
+        {
+            "name": "Launch Built-in web server",
+            "type": "php",
+            "request": "launch",
+            "runtimeArgs": [
+                "-dxdebug.mode=debug",
+                "-dxdebug.start_with_request=yes",
+                "-S",
+                "localhost:8083"
+            ],
+            "program": "",
+            "cwd": "${workspaceRoot}/pma",
+            "port": 9003,
+            "serverReadyAction": {
+                "pattern": "Development Server \\(http://localhost:([0-9]+)\\) started",
+                "uriFormat": "http://localhost:%s",
+                "action": "openExternally"
+            }
         }
     ]
 }
