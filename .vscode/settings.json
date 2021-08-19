@@ -28,6 +28,7 @@
     ],
     "window.menuBarVisibility": "toggle",
     "editor.fontFamily": "Fira Code Retina",
+    "editor.renderWhitespace": "trailing",
     "editor.fontLigatures": true,
     "window.zoomLevel": 0,
     "files.associations": {
