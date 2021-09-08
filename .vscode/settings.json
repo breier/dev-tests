@@ -30,6 +30,8 @@
     "editor.fontFamily": "Fira Code Retina",
     "editor.renderWhitespace": "trailing",
     "editor.fontLigatures": true,
+    "terminal.integrated.defaultProfile.linux": "zsh",
+    "terminal.integrated.fontFamily": "MesloLGS NF",
     "window.zoomLevel": 0,
     "files.associations": {
         "*.xml.dist": "xml"
