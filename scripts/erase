@@ -7,3 +7,6 @@ for index in `history | tail -n 2 | awk '{print $1}' | sort -r`; do
 done
 
 # for i in `history | tail -n 2 | awk '{print $1}' | sort -r`; do history -d $i; done
+
+# ZSH alternative (not so good)
+# sed -i "$(expr $(wc -l ${HISTFILE} | awk '{print $1}') - 2),\$d" ${HISTFILE}
