@@ -1,0 +1,9 @@
+#!/bin/bash
+#
+# Erase your traces (delete last command from shell history)
+
+for index in `history | tail -n 2 | awk '{print $1}' | sort -r`; do
+    history -d ${index}
+done
+
+# for i in `history | tail -n 2 | awk '{print $1}' | sort -r`; do history -d $i; done
