@@ -1,0 +1,46 @@
+#!/bin/bash
+#
+# Diff all files under one folder with another
+
+OUTPUT_FILE="./all.diff"
+
+if [[ $# != 2 ]];then
+	echo "Invalid number of arguments!" # print usage
+	exit 1
+fi
+
+if [[ -d $1 ]]; then
+	MAIN_DIR=$1
+else
+	echo "Folder '$1' could not be found!"
+	exit 2
+fi
+
+if [[ -d $2 ]]; then
+	DIFF_DIR=$2
+else
+	echo "Folder '$2' could not be found!"
+	exit 2
+fi
+
+idx=1
+while [[ -f ${OUTPUT_FILE} ]]; do
+	OUTPUT_FILE="./all-${idx}.diff"
+	idx=$(expr ${idx} \+ 1)
+done
+
+OUTPUT_TEMP=$(mktemp)
+
+for file in `find ${MAIN_DIR} -type f`; do
+	diff_file="${DIFF_DIR}/$(echo ${file} | cut -f2-40 -d/)"
+	echo "diff -urN ${file} ${diff_file}" > ${OUTPUT_TEMP}
+	diff -urN ${file} ${diff_file} 2>/dev/null >> ${OUTPUT_TEMP}
+	if [[ $? != 0 ]]; then
+		cat ${OUTPUT_TEMP} >> ${OUTPUT_FILE}
+		echo -n "."
+	fi
+done
+
+rm ${OUTPUT_TEMP}
+
+echo "DONE"

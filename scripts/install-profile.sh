@@ -57,6 +57,7 @@ sudo cp -rvf ~/.nanorc /root/
 # Installing custom scripts to local bin
 mkdir -p ${BIN_PATH}
 install -v -T -D -m 755 "${SCRIPT_PATH}/git-all" "${BIN_PATH}/git-all"
+install -v -T -D -m 755 "${SCRIPT_PATH}/diff-all" "${BIN_PATH}/diff-all"
 install -v -T -D -m 755 "${SCRIPT_PATH}/composer-all" "${BIN_PATH}/composer-all"
 
 read -p "Do you want to replace \`vi\` with \`nano\` [Y,n]? " REPLY
