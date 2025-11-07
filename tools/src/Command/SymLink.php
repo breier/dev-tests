@@ -1,7 +1,7 @@
 <?php
 
 /**
- * PHP Version 7.3
+ * PHP Version 8.2
  *
  * Symbolic Link File
  *
@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Breier\Tools\Command;
 
 use Breier\Tools\Service\CommandRunner;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,14 +26,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * A tool to replace a given vendor (composer) dependency with a symbolic link
  */
+#[AsCommand(name: 'sym-link')]
 class SymLink extends Command
 {
-    /**
-     * Command Name to be used
-     * @var string
-     */
-    protected static $defaultName = 'sym-link';
-
     /**
      * Configuration
      */
@@ -45,7 +41,7 @@ class SymLink extends Command
     /**
      * Runs the job
      */
-    protected function execute(InputInterface $input, OutputInterface $output): ?int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!$output instanceof ConsoleOutputInterface) {
             throw new \LogicException('This command accepts only an instance of "ConsoleOutputInterface".');

@@ -2,8 +2,9 @@
     "name": "berier/tools",
     "description": "Breier Tools Project",
     "require": {
-        "symfony/console": "5.2.*",
-        "symfony/http-foundation": "5.2.*"
+        "php": ">=8.2",
+        "symfony/console": "7.3.*",
+        "symfony/http-foundation": "7.3.*"
     },
     "autoload": {
         "psr-4": {
